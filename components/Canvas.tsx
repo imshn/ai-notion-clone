@@ -17,13 +17,6 @@ import DeleteDocument from "./DeleteDocument";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
-/**
- * IMPORTANT: LICENSE REQUIRED
- * To remove the watermark, you must first purchase a license
- * Learn more: https://tldraw.dev/community/license
- */
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function StorageTldraw({ roomId }: { roomId: string }) {
     // Getting authenticated user info. Doing this using selectors instead
     // of just `useSelf()` to prevent re-renders on Presence changes

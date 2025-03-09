@@ -52,7 +52,6 @@ export async function createNewBoard() {
   return { boardId: docRef.id };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function deleteDocument(roomId: string) {
   await auth.protect();
   try {
