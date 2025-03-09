@@ -1,19 +1,12 @@
 "use client"
-import { MenuIcon } from "lucide-react"
 import { useCollection } from "react-firebase-hooks/firestore"
-import NewDocumentButton from "./NewDocumentButton"
-import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet"
+
 import { useUser } from "@clerk/nextjs"
 import { collectionGroup, DocumentData, query, where } from "firebase/firestore"
 import { db } from "@/firebase"
 import { useEffect, useState } from "react"
 import SidebarOption from "./SidebarOption"
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 
 interface RoomDocument extends DocumentData {
     createdAt: string;
@@ -22,7 +15,7 @@ interface RoomDocument extends DocumentData {
     userId: string
 }
 
-const Sidebar = () => {
+const DocCards = () => {
     const { user } = useUser()
     const [groupedData, setGroupedData] = useState<{
         owner: RoomDocument[],
@@ -67,7 +60,6 @@ const Sidebar = () => {
     }, [data])
     const menuOptions = (
         <>
-            <NewDocumentButton />
             {
                 error &&
                 <div className="text-red-500 text-sm border my-2 mb-0 border-red-500 p-2 rounded-md">Error While fetching docs!</div>
@@ -75,37 +67,42 @@ const Sidebar = () => {
             {
                 !loading ?
                     <>
-                        <div className="flex py-4 flex-col space-y-4 md:max-w-36">
-                            {/* My Documents*/}
+                        <Card className="flex py-4 flex-col space-y-4 ">
                             {
                                 groupedData?.owner.length === 0 ? (
                                     <h2 className="text-gray-500 font-semibold text-sm">No documents found</h2>
                                 ) :
                                     <>
-                                        <h2 className="text-gray-500 font-semibold text-sm">My Documents</h2>
-                                        {
-                                            groupedData?.owner.map((doc) => {
-                                                return <SidebarOption key={doc.id} id={doc.id} />
-                                            })
-                                        }
+                                        <CardHeader className="flex justify-between items-center">
+                                            <CardTitle className="text-gray-500 font-semibold text-sm">My Documents</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="flex justify-between items-center">
+                                            {
+                                                groupedData?.owner.map((doc) => {
+                                                    return <SidebarOption key={doc.id} id={doc.id} />
+                                                })
+                                            }
+                                        </CardContent>
                                     </>
                             }
-                        </div>
+                        </Card>
                         {/* Shared With Me */}
-                        <div className="flex py-4 flex-col space-y-4 md:max-w-36">
-                            {/* My Documents*/}
-                            {
-                                groupedData?.editor.length > 0 &&
-                                <>
-                                    <h2 className="text-gray-500 font-semibold text-sm">Shared with Me</h2>
+                        {/* My Documents*/}
+                        {
+                            groupedData?.editor.length > 0 &&
+                            <Card className="flex py-4 flex-col space-y-4">
+                                <CardHeader className="flex justify-between items-center">
+                                    <CardTitle className="text-gray-500 font-semibold text-sm">My Documents</CardTitle>
+                                </CardHeader>
+                                <CardContent className="flex justify-between items-center">
                                     {
-                                        groupedData?.editor.map((doc) => (
-                                            <SidebarOption key={doc.id} id={doc.id} />
-                                        ))
+                                        groupedData?.editor.map((doc) => {
+                                            return <SidebarOption key={doc.id} id={doc.id} />
+                                        })
                                     }
-                                </>
-                            }
-                        </div>
+                                </CardContent>
+                            </Card>
+                        }
                     </> :
                     <div className="flex py-4 flex-col space-y-4 md:max-w-36">
                         <h2 className="text-gray-500 font-semibold text-sm">Loading...</h2>
@@ -117,28 +114,10 @@ const Sidebar = () => {
         </>
     )
     return (
-        <div className="p-2 md:p-5 dark:bg-gray-900 bg-gray-200 relative">
-            <div className="md:hidden">
-                <Sheet>
-                    <SheetTrigger>
-                        <MenuIcon className="p-2 hover:opacity-30 rounded-lg" size={40} />
-                    </SheetTrigger>
-                    <SheetContent side="left">
-                        <SheetHeader>
-                            <SheetTitle>Menu</SheetTitle>
-                            <div>
-                                {menuOptions}
-                            </div>
-                        </SheetHeader>
-                    </SheetContent>
-                </Sheet>
-            </div>
-
-            <div className="hidden md:inline">
-                {menuOptions}
-            </div>
+        <div className="grid grid-cols-4 w-full p-2 md:p-5 dark:bg-gray-900 bg-gray-200 relative">
+            {menuOptions}
         </div>
     )
 }
 
-export default Sidebar
+export default DocCards

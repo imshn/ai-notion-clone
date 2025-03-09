@@ -16,7 +16,6 @@ const Document = ({ id }: { id: string }) => {
     const [input, setInput] = useState('')
     const [isUpdating, startTransition] = useTransition();
     const isOwner = useOwner()
-    
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [data, loading, error] = useDocumentData(doc(db, "documents", id))
     const updateTitle = async (e: FormEvent) => {

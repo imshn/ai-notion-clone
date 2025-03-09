@@ -1,5 +1,6 @@
 "use client"
 import React from 'react'
+import { LiveMap, } from "@liveblocks/client";
 import {
     ClientSideSuspense,
     RoomProvider as RoomProviderWrapper,
@@ -10,8 +11,10 @@ import LiveCursorProvider from './LiveCursorProvider';
 const RoomProvider = ({ roomId, children }: { roomId: string; children: React.ReactNode }) => {
     return (
         <RoomProviderWrapper id={roomId} initialPresence={{
-            cursor: null
-        }}>
+            cursor: null,
+            presence: null
+        }}
+            initialStorage={{ records: new LiveMap() }}>
             <ClientSideSuspense fallback={<LoadingSpinner />}>
                 <LiveCursorProvider>
                     {children}

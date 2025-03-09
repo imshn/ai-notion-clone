@@ -5,10 +5,12 @@ import liveblocks from "@/lib/liveblocks";
 import { auth } from "@clerk/nextjs/server";
 
 export async function createNewDocument() {
+  await auth.protect();
   const { sessionClaims } = await auth();
   const docCollectionRef = adminDb.collection("documents");
   const docRef = await docCollectionRef.add({
-    title: "New Document"
+    title: "New Document",
+    type: "document"
   });
 
   await adminDb
@@ -26,8 +28,33 @@ export async function createNewDocument() {
   return { docId: docRef.id };
 }
 
+export async function createNewBoard() {
+  await auth.protect();
+  const { sessionClaims } = await auth();
+  const docCollectionRef = adminDb.collection("documents");
+  const docRef = await docCollectionRef.add({
+    title: "New Board",
+    type: "board"
+  });
+
+  await adminDb
+    .collection("users")
+    .doc(sessionClaims?.email as string)
+    .collection("rooms")
+    .doc(docRef.id)
+    .set({
+      userId: sessionClaims?.email as string,
+      role: "owner",
+      createdAt: new Date(),
+      roomId: docRef.id
+    });
+
+  return { boardId: docRef.id };
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function deleteDocument(roomId: string) {
+  await auth.protect();
   try {
     await adminDb.collection("documents").doc(roomId).delete();
     const query = await adminDb
@@ -48,6 +75,7 @@ export async function deleteDocument(roomId: string) {
 }
 
 export async function inviteUserToRoom(roomId: string, email: string) {
+  await auth.protect();
   try {
     await adminDb
       .collection("users")

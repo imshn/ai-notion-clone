@@ -4,10 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const userId = (await auth()).userId;
-  if (userId === undefined) {
-    (await auth()).redirectToSignIn();
-  }
+  await auth.protect();
 
   const { sessionClaims } = await auth();
   const { room } = await req.json();
